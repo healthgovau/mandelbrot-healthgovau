@@ -6,22 +6,22 @@
 <div class="au-grid">
     {% include 'partials/header.nunj' %}
     {{ nav.docsTop(frctl.docs, doc, request) }}
-</div>
 
-<div class="Frame" id="frame" style="width: 1152px; margin:auto;">
+    <div class="container" data-role="body">
 
-    <div class="Frame-body" data-role="body">
+        <div class="row">
+            <aside class="col-sm-3" data-role="sidebar">
+                {% include 'partials/navigation/navigation.nunj' %}
+            </aside>
 
-        <div class="Frame-panel Frame-panel--main" data-role="main">
-            <div class="Frame-inner" id="pjax-container">
-            {% block content %}{% endblock %}
-            </div>
+            <main class="col-sm-9" data-role="main">
+                <div class="au-body" id="pjax-container">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
         </div>
 
-        <div class="Frame-handle" data-role="frame-resize-handle"></div>
-        <div class="Frame-panel Frame-panel--sidebar" data-role="sidebar">
-            {% include 'partials/navigation/navigation.nunj' %}
-        </div>
+
     </div>
 </div>
 

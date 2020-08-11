@@ -6,3 +6,29 @@
 .Browser-tab.is-active a {
   border-bottom-color: #738497;
 }
+
+.Browser-panel {
+  display: flex;
+  overflow: visible;
+}
+
+.Browser-code {
+  border: 2px solid lightgrey;
+  margin-top: 50px;
+  position: relative;
+  background-color: #f5f5f5;
+  &:before {
+    content: "HTML";
+    position: absolute;
+    top: -28px;
+    background: lightgrey;
+    padding: 3px 9px;
+    left: -2px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  code {
+    overflow: auto;
+  }
+}

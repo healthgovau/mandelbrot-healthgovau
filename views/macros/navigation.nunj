@@ -1,21 +1,19 @@
 {% import "macros/status.nunj" as status %}
 
 {% macro tree(root, current, request) %}
-<div class="Tree" data-behaviour="tree" id="tree-{{ root.name }}">
-    <ul class="Tree-items Tree-depth-1">
-        {{ leaves(root.filter('isHidden', false).items(), root, current, 2, request) }}
-    </ul>
-</div>
+<ul class="au-link-list">
+    {{ leaves(root.filter('isHidden', false).items(), root, current, 2, request) }}
+</ul>
 {% endmacro %}
 
 {% macro leaves(items, root, current, depth, request) %}
     {% for item in items %}
         {% if item.isCollection or (item.isComponent and not item.isCollated and item.variants().filter('isHidden', false).size > 1) %}
-        <li class="Tree-item Tree-collection Tree-depth-{{ depth }}" data-behaviour="collection" id="tree-{{ root.name }}-collection-{{ item.handle }}">
-            <h4 class="Tree-collectionLabel" data-role="toggle">
+        <li>
+            <a href="#">
                 <span>{{ item.label }}</span>
-            </h4>
-            <ul class="Tree-collectionItems" data-role="items">
+            </a>
+            <ul class="au-link-list">
             {% if item.isComponent and not item.isCollated %}
             {% set items = item.variants().filter('isHidden', false).items() %}
             {% else %}
@@ -26,8 +24,8 @@
         </li>
         {% else %}
         {% set isCurrent = true if (current and (current.id == item.id)) else false %}
-        <li class="Tree-item Tree-entity{% if isCurrent %} is-current{% endif %}"{% if isCurrent %} data-state="current"{% endif %} data-role="item">
-            <a class="Tree-entityLink" href="{{ path( (item | url), request) }}" data-pjax>
+        <li class="{% if isCurrent %} active{% endif %}">
+            <a class="Tree-entityLink" href="{{ path( (item | url), request) }}">
                 <span>{{ item.label }}</span>
                 {% if item.status %}{{ status.unlabelled(item.status) }}{% endif %}
             </a>
@@ -84,41 +82,46 @@
 
 
 {% macro docTree(root, current, request) %}
-<div class="Tree" data-behaviour="tree" id="tree-{{ root.name }}">
-    {% for item in root.filter('isHidden', false).items() %}
-        {% if (current.path|truncate(item.path.length, true, '') == item.path) %}
-        <ul class="Tree-items Tree-depth-1">
-            {{ docLeaves(item.items(), root, current, 2, request) }}
-        </ul>
-        {% endif %}
-    {% endfor %}
-</div>
+{% for item in root.filter('isHidden', false).items() %}
+    {% if (current.path|truncate(item.path.length, true, '') == item.path) %}
+    <ul class="au-link-list">
+        {{ docLeaves(item.items(), root, current, 2, request) }}
+    </ul>
+    {% endif %}
+{% endfor %}
 {% endmacro %}
 
 {% macro docLeaves(items, root, current, depth, request) %}
     {% for item in items %}
         {% if item.isCollection %}
-            <li class="Tree-item Tree-collection Tree-depth-{{ depth }}">
-                {% for child in item.items() %}
-                    {% if child.name == 'default' %}
-                        {% set isCurrent = true if (current and (current.id == child.id)) else false %}
-                        {% set inTrail = true if (isCurrent == false and current.path|truncate(item.path.length, true, '') == item.path) else false %}
-                        <a class="Tree-entityLink {% if isCurrent %}active{% endif %}{% if inTrail %}active-trail{% endif %}" href="{{ path( (child | url), request) }}">
+            {% for child in item.items() %}
+                {% if child.name == 'default' %}
+                    {% set isCurrent = true if (current and (current.id == child.id)) else false %}
+                    <li class="{% if isCurrent %}active{% endif %}">
+                        {% if isCurrent %}
                             <span>{{ child.label }}</span>
-                        </a>
-                    {% endif %}
-                {% endfor %}
-                <ul>
+                        {% else %}
+                            <a href="{{ path( (child | url), request) }}">
+                                <span>{{ child.label }}</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <ul class="au-link-list">
                 {% set items = item.filter('isHidden', false).items() %}
                 {{ docLeaves(items, root, current, (depth + 1), request) }}
-                </ul>
-            </li>
+            </ul>
         {% elseif item.name != 'default' %}
             {% set isCurrent = true if (current and (current.id == item.id)) else false %}
-            <li class="Tree-item Tree-entity">
-                <a class="Tree-entityLink{% if isCurrent %} active{% endif %}" href="{{ path( (item | url), request) }}">
+            <li class="{% if isCurrent %} active{% endif %}">
+                {% if isCurrent %}
                     <span>{{ item.label }}</span>
-                </a>
+                {% else %}
+                    <a href="{{ path( (item | url), request) }}">
+                        <span>{{ item.label }}</span>
+                    </a>
+                {% endif %}
             </li>
         {% endif %}
     {% endfor %}

@@ -1,3 +1,20 @@
-.Preview-iframe {
-  padding: 1rem;
+.Preview-wrapper {
+  border: 2px solid lightgrey;
+  padding: 10px;
+  margin-top: 50px;
+  position: relative;
+  &:before {
+    content: "PREVIEW";
+    position: absolute;
+    top: -28px;
+    background: lightgrey;
+    padding: 3px 9px;
+    left: -2px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+iframe {
+  min-width: 100%;
 }

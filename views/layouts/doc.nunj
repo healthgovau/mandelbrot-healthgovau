@@ -2,23 +2,12 @@
 
 {% block content %}
 
-<div class="Document">
-
   {% if doc.name !== 'index' %}
-  <div class="Document-header">
     {% block docHeader %}
     <h1 class="Document-title">{{ page.title }}</h1>
     {% if status %}{{ status }}{% endif %}
     {% endblock %}
-  </div>
   {% endif %}
-
-  <div class="Document-content">
-
-    {% block docContent %}{% endblock %}
-
-  </div>
-
-</div>
+  {% block docContent %}{% endblock %}
 
 {% endblock %}

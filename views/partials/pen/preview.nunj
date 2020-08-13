@@ -4,53 +4,63 @@
 {% if variants.size > 1 %}
 
     {% for variant in variants %}
-        <h2>{{variant.label}}
-            <a class="Pen-previewLink" href="/components/preview/{{variant.handle}}" title="Component preview">
-                {% include "icons/open-in-browser.svg" %}
-            </a>
-        </h2>
-        {% if variant.notes %}
-            {{ frctl.docs.renderString(variant.notes, renderEnv) | async }}
-        {% endif %}
+        {% if not variant.isHidden %}
+            <h2>{{variant.label}}</h2>
+            {% if variant.notes %}
+                {{ frctl.docs.renderString(variant.notes, renderEnv) | async }}
+            {% endif %}
 
-        <div class="Preview-wrapper" data-role="resizer">
-            <div class="Preview-resizer">
-                {% if renderError -%}
-                    {{ renderError }}
-                {% else %}
+            <div class="Preview-wrapper" data-role="resizer">
+                <div id="iframe-resizer-{{variant.handle}}">
+                    {% if renderError -%}
+                        {{ renderError }}
+                    {% else %}
 
-                <iframe
-                    id="iframe-{{variant.handle}}"
-                    data-role="window"
-                    src="/components/preview/{{variant.handle}}"
-                    marginwidth="0" marginheight="0" frameborder="0" vspace="0" hspace="0" scrolling="yes" style="">
-                </iframe>
-                <script>
-                    iFrameResize({}, "#iframe-{{variant.handle}}")
-                </script>
-                {%- endif %}
+                    <iframe
+                        id="iframe-{{variant.handle}}"
+                        data-role="window"
+                        src="/components/preview/{{variant.handle}}"
+                        marginwidth="0" marginheight="0" frameborder="0" vspace="0" hspace="0" scrolling="yes" style="">
+                    </iframe>
+                    <script>
+                        $('#iframe-{{variant.handle}}').iFrameResize();
+                        $(document).ready(function() {
+                            $( "#iframe-resizer-{{variant.handle}}" ).resizable({
+                                handles: {e: ".Preview-handle"},
+                                containment: "parent",
+                                minWidth: 300,
+                                resize: function( event, ui ) {
+                                    $('#iframe-{{variant.handle}}')[0].iFrameResizer.resize();
+                                }
+                            });
+                        });
+                    </script>
+                    {%- endif %}
+                    <div class="Preview-handle ui-resizable-e" data-role="resize-handle"></div>
+                </div>
+
+
             </div>
-            <div class="Preview-handle" data-role="resize-handle"></div>
-            <div class="Preview-overlay"></div>
-        </div>
 
-        {% import "macros/render.nunj" as render %}
-        <div class="Browser-panel Browser-code is-active" data-role="tab-panel" id="browser-{{ entity.id }}-panel-html">
-            <code class="Code Code--lang-html">
-                {% if not entity.isCollated or entity.isVariant or entity.variants().size == 1 %}
-                    <pre>{{ render.entity(entity.render(null, renderEnv, {preview: false, collate: false}) | async(true)) | trim }}</pre>
-                {% else %}
-                    <pre>{{ render.entity(variant.render(null, renderEnv, {preview: false, collate: false}) | async(true)) | trim }}</pre>
-                {% endif %}
-            </code>
-        </div>
+            <a href="/components/preview/{{variant.handle}}" title="Component preview">{% include 'icons/open-in-browser.svg' %} Full screen</a>
 
+            {% import "macros/render.nunj" as render %}
+            <div class="Browser-panel Browser-code is-active" data-role="tab-panel" id="browser-{{ entity.id }}-panel-html">
+                <code class="Code Code--lang-html">
+                    {% if not entity.isCollated or entity.isVariant or entity.variants().size == 1 %}
+                        <pre>{{ render.entity(entity.render(null, renderEnv, {preview: false, collate: false}) | async(true)) | trim }}</pre>
+                    {% else %}
+                        <pre>{{ render.entity(variant.render(null, renderEnv, {preview: false, collate: false}) | async(true)) | trim }}</pre>
+                    {% endif %}
+                </code>
+            </div>
+        {% endif %}
     {% endfor %}
 
 {% else %}
 
     <div class="Preview-wrapper" data-role="resizer">
-        <div class="Preview-resizer">
+        <div id="iframe-resizer-{{entity.handle}}">
             {% if renderError -%}
                 {{ renderError }}
             {% else %}
@@ -61,15 +71,29 @@
                 marginwidth="0" marginheight="0" frameborder="0" vspace="0" hspace="0" scrolling="yes">
             </iframe>
             <script>
-                    iFrameResize({}, "#iframe-{{entity.handle}}")
-                </script>
+                iFrameResize({}, "#iframe-{{entity.handle}}")
+                $(document).ready(function() {
+                    $( "#iframe-resizer-{{entity.handle}}" ).resizable({
+                        handles: {e: ".Preview-handle"},
+                        containment: "parent",
+                        minWidth: 300,
+                        resize: function( event, ui ) {
+                            $('#iframe-{{entity.handle}}')[0].iFrameResizer.resize();
+                        }
+                    });
+                });
+            </script>
             {%- endif %}
+            <div class="Preview-handle ui-resizable-e" data-role="resize-handle"></div>
         </div>
         <div class="Preview-handle" data-role="resize-handle"></div>
         <div class="Preview-overlay"></div>
     </div>
 
     {% import "macros/render.nunj" as render %}
+
+    <a href="/components/preview/{{entity.handle}}" title="Component preview">{% include 'icons/open-in-browser.svg' %} Full screen</a>
+
     <div class="Browser-panel Browser-code is-active" data-role="tab-panel" id="browser-{{ entity.id }}-panel-html">
         <code class="Code Code--lang-html">
             {% if not entity.isCollated or entity.isVariant or entity.variants().size == 1 %}

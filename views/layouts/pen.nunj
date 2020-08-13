@@ -31,22 +31,10 @@
 
     {% include "partials/pen/header.nunj" %}
 
-    <div class="Browser-panel Browser-notes" data-role="tab-panel" id="browser-{{ entity.id }}-panel-notes">
-        <div class="Prose Prose--condensed">
-            {% if entity.notes %}
-            {{ frctl.docs.renderString(entity.notes, renderEnv) | async }}
-            {% endif %}
-        </div>
-    </div>
-
     {% include "partials/pen/preview.nunj" %}
-
-
 
     {% endblock %}
 
-
 </div>
-
 
 {% endblock %}

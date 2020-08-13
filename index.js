@@ -7,7 +7,8 @@ const mandelbrot = require('@frctl/mandelbrot');
  */
 const subTheme = mandelbrot({
   skin: "navy",
-  styles: ['/subtheme/css/style.css', '/build/css/hds-all.min.css'],
+  styles: ['/subtheme/css/style.css', '/build/css/hds-all.min.css', '/subtheme/js/jquery-ui.min.css'],
+  scripts: ['/subtheme/js/jquery-3.5.1.min.js', '/subtheme/js/jquery-ui.min.js'],
   format: 'yaml',
   nav: ['docs', 'components'],
   panels: ["notes", "html", "info", "resources"]

@@ -1,6 +1,5 @@
 .Preview-wrapper {
   border: 2px solid lightgrey;
-  padding: 10px;
   margin-top: 50px;
   position: relative;
   &:before {
@@ -14,6 +13,24 @@
     font-weight: bold;
   }
 }
+
+.Preview-handle {
+  background: lightgrey;
+  position: absolute;
+  &:before {
+    content: "II";
+    position: absolute;
+    top: 50%;
+    left: 2px;
+  }
+}
+
+.ui-resizable .ui-resizable-e {
+  width: 11px;
+  right: -1px;
+}
+
+.ui-resizable-resizing iframe{ pointer-events:none;}
 
 iframe {
   min-width: 100%;

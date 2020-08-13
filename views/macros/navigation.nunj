@@ -1,6 +1,9 @@
 {% import "macros/status.nunj" as status %}
 
 {% macro tree(root, current, request) %}
+<h2 class="au-sidenav__title">
+    <a href="#">{{root.label|capitalize}}</a>
+</h2>
 <ul class="au-link-list">
     {{ leaves(root.filter('isHidden', false).items(), root, current, 2, request) }}
 </ul>
@@ -55,18 +58,21 @@
                             <ul class="au-link-list">
                                 {% for item in root.filter('isHidden', false).items() %}
                                     {% set isCurrent = true if (current and (current.id == item.id)) else false %}
-                                    {% set children = item.filter('isHidden', false).items() %}
-                                    <li class="{% if isCurrent %} active{% endif %}">
-                                        {% for child in children %}
-                                            {% if child.name == 'default' %}
-                                                <a  href="{{ path( (child | url), request) }}">{{ item.label }}</a>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </li>
+                                    {% if item.handle == 'index' %}
+                                        <li class="{% if isCurrent %} active{% endif %}">
+                                            <a  href="{{ path( (item | url), request) }}">{{ item.label }}</a>
+                                        </li>
+                                    {% else %}
+                                        {% set children = item.filter('isHidden', false).items() %}
+                                        <li class="{% if isCurrent %} active{% endif %}">
+                                            {% for child in children %}
+                                                {% if child.name == 'index' %}
+                                                    <a  href="{{ path( (child | url), request) }}">{{ item.label }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
-                                <li class="{% if isCurrent %} is-current{% endif %}">
-                                    <a href="/components">Components</a>
-                                </li>
                             </ul>
                             <div class="au-main-nav__focus-trap-bottom"></div>
                         </div>
@@ -81,21 +87,28 @@
 {% endmacro %}
 
 
+
 {% macro docTree(root, current, request) %}
-{% for item in root.filter('isHidden', false).items() %}
-    {% if (current.path|truncate(item.path.length, true, '') == item.path) %}
-    <ul class="au-link-list">
-        {{ docLeaves(item.items(), root, current, 2, request) }}
-    </ul>
-    {% endif %}
-{% endfor %}
+    {% set items = root.filter('isHidden', false).items() %}
+    {% for item in items %}
+        {% if (current.path|truncate(item.path.length, true, '') == item.path) %}
+            {% if item.items and item.items().length > 1 %}
+                <h2 class="au-sidenav__title">
+                    <a href="#">{{item.label}}</a>
+                </h2>
+                <ul class="au-link-list">
+                    {{ docLeaves(item.items(), root, current, 2, request) }}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro docLeaves(items, root, current, depth, request) %}
     {% for item in items %}
         {% if item.isCollection %}
             {% for child in item.items() %}
-                {% if child.name == 'default' %}
+                {% if child.name == 'index' %}
                     {% set isCurrent = true if (current and (current.id == child.id)) else false %}
                     <li class="{% if isCurrent %}active{% endif %}">
                         {% if isCurrent %}
@@ -112,7 +125,7 @@
                 {% set items = item.filter('isHidden', false).items() %}
                 {{ docLeaves(items, root, current, (depth + 1), request) }}
             </ul>
-        {% elseif item.name != 'default' %}
+        {% elseif item.name != 'index' %}
             {% set isCurrent = true if (current and (current.id == item.id)) else false %}
             <li class="{% if isCurrent %} active{% endif %}">
                 {% if isCurrent %}

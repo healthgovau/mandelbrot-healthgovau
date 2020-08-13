@@ -1,7 +1,49 @@
-<h1 class="Pen-title">
-    {{ entity.title }}
-</h1>
-<ul class="au-tags">
-    <li style="background: {{entity.status.color}}">{{ entity.status.label }}</li>
-</ul>
-</span>
+<div class="row">
+
+<div class="col-xs-7">
+    <h1 class="Pen-title">
+        {{ entity.title }}
+    </h1>
+
+    {% if entity.notes %}
+    {{ frctl.docs.renderString(entity.notes, renderEnv) | async }}
+    {% endif %}
+</div>
+<div class="col-xs-5">
+    <div class="">
+
+        <div class="health-field health-field--inline">
+            <div class="health-field__label">Status:</div>
+            <div class="health-field__item">
+                <ul class="au-tags au-tags--inline">
+                    <li style="background: {{entity.status.color}}">{{ entity.status.label }}</li>
+                </ul>
+            </div>
+        </div>
+
+        {% if entity.tags.length > 1 %}
+            <div class="health-field health-field--inline">
+                <div class="health-field__label">Tags:</div>
+                <div class="health-field__item">
+                <ul class="au-tags au-tags--inline">
+                    {% for tag in entity.tags %}
+                        {% if tag|length %}
+                            <li>{{ tag }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                </div>
+            </div>
+        {% endif %}
+
+
+        {% if entity.meta.govau|length %}
+            <div class="health-field health-field--inline">
+                <div class="health-field__label">Design System:</div>
+                <div class="health-field__item"><a href="{{entity.meta.govau.link}}">{{ entity.title }}</a> v{{entity.meta.govau.version}}</div>
+            </div>
+        {% endif %}
+        </div>
+
+    </div>
+</div>

@@ -4,7 +4,7 @@
 </nav>
 {% endif %}
 
-{% if entity or request.path == '/' %}
+{% if entity or request.path == '/docs/components' %}
 <nav class="au-side-nav">
     {% include 'partials/navigation/components.nunj' %}
 </nav>

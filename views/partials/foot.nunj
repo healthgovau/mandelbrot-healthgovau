@@ -10,8 +10,11 @@
                 </div>
                 <div class="col-xs-12 col-sm-3 au-footer__navigation-section">
                     <h3>GitHub</h3>
-                    <p>The Health Design System is available on Github.</p>
-                    <p>The latest version is <span class="svg-inline--fa fa-fw">
+                    <p>Download version <strong>
+                    {% if frctl.get('project.version') %}
+                    {{ frctl.get('project.version') }}
+                    {% endif %}</strong>  
+                    on <a href="{{ frctl.get('project.repo') }}" title="Health Design System on Github">GitHub</a> <span class="svg-inline--fa fa-fw">
                         <svg aria-labelledby="title" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                             fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414">
                             <title>GitHub icon</title>
@@ -20,10 +23,6 @@
                                 fill="#fff" />
                         </svg>
                     </span>
-                    {% if frctl.get('project.version') %}
-                    <a href="{{ frctl.get('project.repo') }}" title="Health Design System on Github">version
-                        {{ frctl.get('project.version') }}</a>
-                    {% endif %}
                     </p>
                 </div>
             </nav>

@@ -1,22 +1,94 @@
 {% import "macros/status.nunj" as status %}
 
 {% macro tree(root, current, request) %}
-<h2 class="au-sidenav__title">
-    <a href="#">{{root.label|capitalize}}</a>
-</h2>
-<ul class="au-link-list">
-    {{ leaves(root.filter('isHidden', false).items(), root, current, 2, request) }}
-</ul>
+<style>
+
+.nav-tree .list-group-item > .caret {
+    position: absolute;
+    height: 28px;
+    width: 16px;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+}
+.nav-tree .list-group .caret {
+    margin-left: 15px;
+}
+.nav-tree .list-group-item > .caret:after {
+    display: none;
+}
+.nav-tree .list-group-item.has-children > .caret:after {
+    display: block;
+    content: url(http://ssl.gstatic.com/ui/v1/zippy/arrow_right.png);
+    left: 6px;
+    top: 3px;
+    position: absolute;
+}
+.nav-tree .list-group-item > .list-group {
+    display: none;
+}
+.nav-tree .open > .list-group {
+    display: block;
+}
+.nav-tree .list-group-item.has-children.open > .caret:after {
+    content: url(http://ssl.gstatic.com/ui/v1/zippy/arrow_down.png);
+    left: 5px;
+    top: 2px;
+}
+</style>
+
+<nav class="au-side-nav">
+    <div class="au-side-nav__content">
+        <h2 class="au-sidenav__title">
+            <a href="/docs/components">{{root.label|capitalize}}</a>
+        </h2>
+        <ul class="au-link-list nav-tree list-group">
+            {{ leaves(root.filter('isHidden', false).items(), root, current, 2, request) }}
+        </ul>
+    </div>
+</nav>
+<script>
+// find all nav-tree's
+$('.nav-tree').each(function () {
+
+    // scope the tree
+    var tree = $(this),
+        groups = tree.find('.list-group'),
+        items = tree.find('.list-group-item');
+
+    // each list group item
+    items.each(function(i, item){
+
+        // toggle open class on caret mouse click
+        $(item).children('a.list-group-toggle').on('click', function (event) {
+            $(item).toggleClass('open');
+            event.preventDefault();
+        });
+
+        // toggle active class on item mouse click
+        $(item).children('a').on('click', function (event) {
+
+            // remove previous active item
+            items.removeClass('active');
+
+            // add active class to item
+            $(item).addClass('active');
+        });
+    });
+});
+</script>
 {% endmacro %}
 
 {% macro leaves(items, root, current, depth, request) %}
     {% for item in items %}
         {% if item.isCollection or (item.isComponent and not item.isCollated and item.variants().filter('isHidden', false).size > 1) %}
-        <li>
-            <a href="#">
+        <li class="list-group-item has-children">
+            <b class="caret"></b>
+            <a class="list-group-toggle" href="#">
                 <span>{{ item.label }}</span>
             </a>
-            <ul class="au-link-list">
+            <ul class="au-link-list list-group">
             {% if item.isComponent and not item.isCollated %}
             {% set items = item.variants().filter('isHidden', false).items() %}
             {% else %}
@@ -27,8 +99,8 @@
         </li>
         {% else %}
         {% set isCurrent = true if (current and (current.id == item.id)) else false %}
-        <li class="{% if isCurrent %} active{% endif %}">
-            <a class="Tree-entityLink" href="{{ path( (item | url), request) }}">
+        <li class="{% if isCurrent %} active{% endif %} list-group-item">
+            <a class="Tree-entityLink js-Pjax-link" href="{{ path( (item | url), request) }}">
                 <span>{{ item.label }}</span>
                 {% if item.status %}{{ status.unlabelled(item.status) }}{% endif %}
             </a>
@@ -93,12 +165,16 @@
     {% for item in items %}
         {% if (current.path|truncate(item.path.length, true, '') == item.path) %}
             {% if item.items and item.items().length > 1 %}
-                <h2 class="au-sidenav__title">
-                    <a href="#">{{item.label}}</a>
-                </h2>
-                <ul class="au-link-list">
-                    {{ docLeaves(item.items(), root, current, 2, request) }}
-                </ul>
+                <nav class="au-side-nav">
+                    <div class="au-side-nav__content">
+                        <h2 class="au-sidenav__title">
+                            <a href="/{{root.relPath}}/{{item.path}}">{{item.label}}</a>
+                        </h2>
+                        <ul class="au-link-list">
+                            {{ docLeaves(item.items(), root, current, 2, request) }}
+                        </ul>
+                    </div>
+                </nav>
             {% endif %}
         {% endif %}
     {% endfor %}

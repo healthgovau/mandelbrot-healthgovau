@@ -1,5 +1,3 @@
 {% if frctl.components.size %}
-<div class="au-side-nav__content">
-{{ nav.tree(frctl.components, entity, request) }}
-</div>
+  {{ nav.tree(frctl.components, entity, request) }}
 {% endif %}

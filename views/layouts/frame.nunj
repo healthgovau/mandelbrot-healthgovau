@@ -10,12 +10,21 @@
     <div class="container" data-role="body">
 
         <div class="row">
-            <aside class="col-sm-3" data-role="sidebar">
-                {% include 'partials/navigation/navigation.nunj' %}
-            </aside>
 
-            <main class="col-sm-9" data-role="main">
-                <div class="au-body" id="pjax-container">
+            {% set nav %}
+                {% include 'partials/navigation/navigation.nunj' %}
+            {% endset %}
+
+            {% set mainCol = 'col-sm-12' %}
+            {% if nav | trim %}
+                <aside class="col-sm-3" data-role="sidebar">
+                    {{ nav }}
+                </aside>
+                {% set mainCol = 'col-sm-9' %}
+            {% endif %}
+
+            <main class="{{mainCol}}" data-role="main">
+                <div class="au-body js-Pjax-container">
                     {% block content %}{% endblock %}
                 </div>
             </main>
@@ -25,4 +34,13 @@
     </div>
 </div>
 
+<script src="{{ '/subtheme/js/pjax.min.js' }}"></script>
+<script>
+$(function() {
+var pjax = new Pjax({
+        elements: "a.js-Pjax-link",
+        selectors: [".js-Pjax-container"]
+    });
+});
+</script>
 {% endblock %}

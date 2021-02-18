@@ -35,3 +35,38 @@
   color: $color-sidebar-heading;
   font-weight: 700;
 }
+
+
+.nav-tree .list-group-item > .caret {
+  position: absolute;
+  height: 28px;
+  width: 16px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.nav-tree .list-group .caret {
+  margin-left: 15px;
+}
+.nav-tree .list-group-item > .caret:after {
+  display: none;
+}
+.nav-tree .list-group-item.has-children > .caret:after {
+  display: block;
+  content: url(http://ssl.gstatic.com/ui/v1/zippy/arrow_right.png);
+  left: 6px;
+  top: 3px;
+  position: absolute;
+}
+.nav-tree .list-group-item > .list-group {
+  display: none;
+}
+.nav-tree .open > .list-group {
+  display: block;
+}
+.nav-tree .list-group-item.has-children.open > .caret:after {
+  content: url(http://ssl.gstatic.com/ui/v1/zippy/arrow_down.png);
+  left: 5px;
+  top: 2px;
+}
